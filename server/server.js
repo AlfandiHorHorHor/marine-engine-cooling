@@ -16,7 +16,6 @@
 const express = require("express");
 const cors = require("cors");
 const http = require("http");
-const path = require("path");
 const { WebSocketServer } = require("ws");
 
 const PORT = process.env.PORT || 8080;
@@ -32,7 +31,10 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok", uptime: process.uptime() });
 });
 
-app.use(express.static(path.join(__dirname, "public")));
+// Root endpoint (Railway health check)
+app.get("/", (req, res) => {
+  res.json({ status: "ok", service: "cooling-system-monitor" });
+});
 
 const server = http.createServer(app);
 
