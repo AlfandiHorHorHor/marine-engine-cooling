@@ -38,9 +38,13 @@ app.get("/", (req, res) => {
 
 const server = http.createServer(app);
 
+// Railway proxy fix: extend timeouts for WebSocket
+server.keepAliveTimeout = 120000;
+server.headersTimeout = 125000;
+
 // Two separate WS servers on distinct paths, sharing one HTTP server.
-const deviceWSS = new WebSocketServer({ noServer: true });
-const dashboardWSS = new WebSocketServer({ noServer: true });
+const deviceWSS = new WebSocketServer({ noServer: true, perMessageDeflate: false });
+const dashboardWSS = new WebSocketServer({ noServer: true, perMessageDeflate: false });
 
 server.on("upgrade", (request, socket, head) => {
   const { url } = request;
