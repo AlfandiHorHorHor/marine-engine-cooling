@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Marine Engine Cooling Monitor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="deck">
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="topbar__brand">
+      <span class="topbar__mark">&#9875;</span>
+      <div class="topbar__titles">
+        <h1>Engine Room Cooling Monitor</h1>
+        <p>Sistem Monitoring Pendingin Kapal &mdash; Real-time</p>
+      </div>
+    </div>
+    <div class="topbar__meta">
+      <div class="device-status" id="deviceStatus" data-state="offline">
+        <span class="device-status__dot"></span>
+        <span class="device-status__label">Menghubungkan&hellip;</span>
+      </div>
+      <div class="clock" id="clock">--:--:--</div>
+    </div>
+  </header>
+
+  <!-- ============ ALARM BANNER ============ -->
+  <div class="alarm-banner" id="alarmBanner" hidden>
+    <span class="alarm-banner__icon">&#9888;</span>
+    <span id="alarmBannerText">ALARM AKTIF</span>
+  </div>
+
+  <!-- ============ PANELS ============ -->
+  <main class="panels">
+
+    <!-- ---------- ENGINE PANEL ---------- -->
+    <section class="panel panel--engine">
+      <div class="panel__header">
+        <h2>Sistem Pendingin Mesin</h2>
+        <span class="panel__state" id="engineState">&mdash;</span>
+      </div>
+
+      <div class="gauges">
+        <div class="gauge" id="gauge-inlet" data-min="0" data-max="90" data-danger="70">
+          <svg viewBox="0 0 200 130" class="gauge__svg">
+            <path class="gauge__track" d="M 20 110 A 80 80 0 1 1 180 110" />
+            <path class="gauge__value" d="M 20 110 A 80 80 0 1 1 180 110" />
+          </svg>
+          <div class="gauge__readout">
+            <span class="gauge__number">&mdash;</span>
+            <span class="gauge__unit">&deg;C</span>
+          </div>
+          <div class="gauge__label">Suhu Inlet</div>
+        </div>
+
+        <div class="gauge" id="gauge-outlet" data-min="0" data-max="90" data-danger="70">
+          <svg viewBox="0 0 200 130" class="gauge__svg">
+            <path class="gauge__track" d="M 20 110 A 80 80 0 1 1 180 110" />
+            <path class="gauge__value" d="M 20 110 A 80 80 0 1 1 180 110" />
+          </svg>
+          <div class="gauge__readout">
+            <span class="gauge__number">&mdash;</span>
+            <span class="gauge__unit">&deg;C</span>
+          </div>
+          <div class="gauge__label">Suhu Outlet</div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat__label">Flow Rate</span>
+          <span class="stat__value"><span id="engineFlow">&mdash;</span> <small>L/min</small></span>
+        </div>
+        <div class="stat">
+          <span class="stat__label">Pressure</span>
+          <span class="stat__value"><span id="enginePressure">&mdash;</span> <small>psi</small></span>
+        </div>
+        <div class="stat">
+          <span class="stat__label">Setpoint</span>
+          <span class="stat__value"><span id="engineSetpoint">&mdash;</span> <small>&deg;C</small></span>
+        </div>
+      </div>
+
+      <div class="pwm">
+        <div class="pwm__head">
+          <span>Radiator Fan PWM</span>
+          <span id="engineFanValue">&mdash;</span>
+        </div>
+        <div class="pwm__track"><div class="pwm__fill" id="engineFanBar"></div></div>
+      </div>
+
+      <div class="leds">
+        <div class="led" id="led-engine-running"><span class="led__dot"></span>Running</div>
+        <div class="led" id="led-engine-overheat"><span class="led__dot"></span>Overheat</div>
+        <div class="led" id="led-engine-pressure"><span class="led__dot"></span>High Pressure</div>
+      </div>
+
+      <div class="actuators-section">
+        <h3 class="actuators-section__title">Status Aktuator</h3>
+        <div class="actuators-grid">
+          <div class="actuator-status">
+            <span class="actuator-status__label">Pompa</span>
+            <span class="actuator-status__indicator" id="actuator-pump"></span>
+          </div>
+          <div class="actuator-status">
+            <span class="actuator-status__label">Valve</span>
+            <span class="actuator-status__indicator" id="actuator-valve"></span>
+          </div>
+          <div class="actuator-status">
+            <span class="actuator-status__label">Kipas Radiator</span>
+            <span class="actuator-status__indicator" id="actuator-radiator-fan"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- ROOM PANEL ---------- -->
+    <section class="panel panel--room">
+      <div class="panel__header">
+        <h2>Sistem Pendingin Ruangan</h2>
+        <span class="panel__state" id="roomState">&mdash;</span>
+      </div>
+
+      <div class="gauges gauges--single">
+        <div class="gauge" id="gauge-room" data-min="0" data-max="55" data-danger="40">
+          <svg viewBox="0 0 200 130" class="gauge__svg">
+            <path class="gauge__track" d="M 20 110 A 80 80 0 1 1 180 110" />
+            <path class="gauge__value" d="M 20 110 A 80 80 0 1 1 180 110" />
+          </svg>
+          <div class="gauge__readout">
+            <span class="gauge__number">&mdash;</span>
+            <span class="gauge__unit">&deg;C</span>
+          </div>
+          <div class="gauge__label">Suhu Ruangan</div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat">
+          <span class="stat__label">Setpoint</span>
+          <span class="stat__value"><span id="roomSetpoint">&mdash;</span> <small>&deg;C</small></span>
+        </div>
+      </div>
+
+      <div class="pwm">
+        <div class="pwm__head">
+          <span>Exhaust Fan PWM</span>
+          <span id="roomFanValue">&mdash;</span>
+        </div>
+        <div class="pwm__track"><div class="pwm__fill" id="roomFanBar"></div></div>
+      </div>
+
+      <div class="leds">
+        <div class="led" id="led-room-running"><span class="led__dot"></span>Running</div>
+      </div>
+
+      <div class="fans-section">
+        <h3 class="fans-section__title">Fan Status</h3>
+        <div class="fans-grid">
+          <div class="fan-status">
+            <span class="fan-status__label">Suction Fan</span>
+            <span class="fan-status__indicator" id="actuator-suction-fan"></span>
+          </div>
+          <div class="fan-status">
+            <span class="fan-status__label">Exhaust Fan</span>
+            <span class="fan-status__indicator" id="actuator-exhaust-fan"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ HISTORY CHART ============ -->
+  <section class="history">
+    <div class="history__head">
+      <h2>Riwayat Suhu</h2>
+      <span class="history__hint">5 menit terakhir</span>
+    </div>
+    <canvas id="historyChart" height="90"></canvas>
+  </section>
+
+  <footer class="foot">
+    Tugas Akhir &mdash; Sistem Monitoring Pendingin Mesin Kapal &middot; WebSocket + Node.js
+  </footer>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0"></script>
+<script>
+  // Backend URL injection: ganti nilai ini dengan URL Railway Anda
+  // Contoh: window.__BACKEND_URL__ = "wss://your-app.up.railway.app";
+  window.__BACKEND_URL__ = "";
+</script>
+<script src="app.js"></script>
+</body>
+</html>

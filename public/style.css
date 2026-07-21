@@ -1,0 +1,598 @@
+/* ===================================================================
+   Design tokens
+   Theme: ship engine-room control panel. Deep navy hull, brass/copper
+   for the "hot" engine system, teal for the "cool" room system.
+=================================================================== */
+:root {
+  --bg: #0A1420;
+  --bg-grid: #0C1826;
+  --panel: #11202F;
+  --panel-alt: #0D1B28;
+  --border: #1E3346;
+  --border-soft: #16283A;
+
+  --text: #E7EEF5;
+  --muted: #7C93A8;
+  --muted-dim: #4C607A22;
+
+  --engine: #E8935A;
+  --engine-soft: rgba(232, 147, 90, 0.14);
+  --room: #4FD1C5;
+  --room-soft: rgba(79, 209, 197, 0.14);
+
+  --danger: #E5484D;
+  --danger-soft: rgba(229, 72, 77, 0.16);
+  --success: #3ECF8E;
+
+  --font-display: "Rajdhani", "Inter", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", monospace;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background:
+    radial-gradient(1200px 600px at 15% -10%, #10233A 0%, transparent 60%),
+    repeating-linear-gradient(0deg, var(--bg-grid) 0 1px, transparent 1px 42px),
+    repeating-linear-gradient(90deg, var(--bg-grid) 0 1px, transparent 1px 42px),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  min-height: 100vh;
+}
+
+.deck {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px 20px 40px;
+}
+
+/* ===================================================================
+   Top bar
+=================================================================== */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+.topbar__brand { display: flex; align-items: center; gap: 14px; }
+
+.topbar__mark {
+  font-size: 28px;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--engine-soft);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--engine);
+}
+
+.topbar__titles h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.topbar__titles p {
+  margin: 2px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.topbar__meta { display: flex; align-items: center; gap: 18px; }
+
+.device-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.device-status__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+.device-status[data-state="online"] .device-status__dot {
+  background: var(--success);
+  box-shadow: 0 0 0 3px rgba(62, 207, 142, 0.18);
+  animation: pulse 1.8s infinite;
+}
+
+.device-status[data-state="online"] .device-status__label { color: var(--success); }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+.clock {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+/* ===================================================================
+   Alarm banner
+=================================================================== */
+.alarm-banner {
+  margin-top: 14px;
+  padding: 12px 18px;
+  background: var(--danger-soft);
+  border: 1px solid var(--danger);
+  color: #FFD9DA;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  animation: alarmGlow 1.2s infinite;
+}
+
+/* PENTING: tanpa aturan ini, atribut `hidden` dari JS (banner.hidden = true)
+   tidak akan menyembunyikan banner, karena `.alarm-banner { display: flex }`
+   di atas menang atas default browser `[hidden] { display:none }`. Ini
+   yang menyebabkan banner + animasi kedipnya nempel terus walau alarm
+   sudah tidak aktif. */
+.alarm-banner[hidden] {
+  display: none;
+}
+
+.alarm-banner__icon { font-size: 18px; }
+
+@keyframes alarmGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.35); }
+  50% { box-shadow: 0 0 0 8px rgba(229, 72, 77, 0); }
+}
+
+/* ===================================================================
+   Panels Grid
+=================================================================== */
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+@media (max-width: 900px) {
+  .panels {
+    grid-template-columns: 1fr;
+  }
+}
+.panels {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 880px) {
+  .panels { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px 20px;
+  border-top: 3px solid var(--border);
+}
+
+.panel--engine { border-top-color: var(--engine); }
+.panel--room { border-top-color: var(--room); }
+
+.panel__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.panel__header h2 {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.panel__state {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.panel--engine .panel__state { color: var(--engine); }
+.panel--room .panel__state { color: var(--room); }
+
+/* ===================================================================
+   Gauges
+=================================================================== */
+.gauges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 6px 0 14px;
+}
+
+.gauges--single { grid-template-columns: 1fr; max-width: 240px; margin-inline: auto; }
+
+.gauge { position: relative; text-align: center; }
+
+.gauge__svg { width: 100%; height: auto; display: block; }
+
+.gauge__track {
+  fill: none;
+  stroke: var(--border-soft);
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+
+.gauge__value {
+  fill: none;
+  stroke: var(--engine);
+  stroke-width: 14;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.6s ease, stroke 0.4s ease;
+}
+
+.panel--room .gauge__value { stroke: var(--room); }
+
+.gauge__value.is-danger { stroke: var(--danger); }
+
+.gauge__readout {
+  position: absolute;
+  top: 58%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+}
+
+.gauge__number {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.gauge__unit {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.gauge__label {
+  margin-top: -6px;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+/* ===================================================================
+   Stat row
+=================================================================== */
+.stat-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.gauges--single + .stat-row { grid-template-columns: 1fr; }
+
+.stat {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat__label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.stat__value {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.stat__value small { color: var(--muted); font-weight: 400; font-size: 11px; }
+
+/* ===================================================================
+   PWM bar
+=================================================================== */
+.pwm { margin-bottom: 14px; }
+
+.pwm__head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+}
+
+.pwm__track {
+  height: 10px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.pwm__fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--engine), #F4B583);
+  transition: width 0.5s ease;
+}
+
+.panel--room .pwm__fill { background: linear-gradient(90deg, var(--room), #8FE9E0); }
+
+/* ===================================================================
+   LED indicators
+=================================================================== */
+.leds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.led {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.led__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2A3F52;
+}
+
+.led.is-on { color: var(--text); }
+.led.is-on .led__dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
+.led.is-alarm.is-on .led__dot { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+.led.is-alarm.is-on { color: #FFB3B5; }
+
+/* ===================================================================
+   History chart
+=================================================================== */
+.history {
+  margin-top: 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px 10px;
+}
+
+.history__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.history__head h2 {
+  font-family: var(--font-display);
+  font-size: 16px;
+  margin: 0;
+}
+
+.history__hint { font-size: 11.5px; color: var(--muted); }
+
+/* ===================================================================
+   Setpoint form
+=================================================================== */
+.setpoint-form {
+  margin-bottom: 14px;
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.setpoint-form label {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+
+.setpoint-form__row { display: flex; gap: 8px; }
+
+.setpoint-form__input {
+  flex: 1;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  border-radius: 6px;
+  padding: 7px 10px;
+  min-width: 0;
+}
+
+.setpoint-form__input:focus {
+  outline: none;
+  border-color: var(--engine);
+}
+
+.panel--room .setpoint-form__input:focus { border-color: var(--room); }
+
+.setpoint-form__btn {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: #0A1420;
+  background: var(--engine);
+  border: none;
+  border-radius: 6px;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.panel--room .setpoint-form__btn { background: var(--room); }
+
+.setpoint-form__btn:hover { filter: brightness(1.1); }
+.setpoint-form__btn:active { filter: brightness(0.9); }
+.setpoint-form__btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.setpoint-form__status {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--muted);
+  min-height: 14px;
+}
+
+.setpoint-form__status.is-success { color: var(--success); }
+.setpoint-form__status.is-error { color: var(--danger); }
+
+/* ===================================================================
+   Fans Section (Suction & Exhaust)
+=================================================================== */
+.fans-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.actuators-section {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.fans-section__title,
+.actuators-section__title {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 0 0 10px 0;
+  font-weight: 600;
+}
+
+.fans-grid,
+.actuators-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.fan-status,
+.actuator-status {
+  background: var(--panel-alt);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.fan-status__label,
+.actuator-status__label {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: capitalize;
+}
+
+.fan-status__indicator,
+.actuator-status__indicator {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  padding: 3px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  background: var(--bg);
+  min-width: 35px;
+  transition: all 0.2s ease;
+}
+
+.fan-status__indicator.is-active {
+  color: var(--room);
+  border-color: var(--room);
+  background: rgba(79, 209, 197, 0.1);
+  box-shadow: 0 0 6px rgba(79, 209, 197, 0.3);
+}
+
+.actuator-status__indicator.is-active {
+  color: var(--success);
+  border-color: var(--success);
+  background: rgba(62, 207, 142, 0.1);
+  box-shadow: 0 0 6px rgba(62, 207, 142, 0.3);
+}
+
+/* ===================================================================
+   Footer
+=================================================================== */
+.foot {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11.5px;
+  margin-top: 22px;
+  letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .device-status[data-state="online"] .device-status__dot,
+  .alarm-banner {
+    animation: none;
+  }
+}
