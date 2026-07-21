@@ -22,6 +22,9 @@ const PORT = process.env.PORT || 8080;
 
 const app = express();
 
+// Trust Railway proxy
+app.set("trust proxy", 1);
+
 // CORS: allow frontend from Vercel
 const FRONTEND_URL = process.env.FRONTEND_URL || "*";
 app.use(cors({ origin: FRONTEND_URL }));
@@ -34,6 +37,15 @@ app.get("/health", (req, res) => {
 // Root endpoint (Railway health check)
 app.get("/", (req, res) => {
   res.json({ status: "ok", service: "cooling-system-monitor" });
+});
+
+// WebSocket endpoints - respond to regular HTTP GET (for debugging)
+app.get("/esp32", (req, res) => {
+  res.json({ status: "ok", endpoint: "/esp32", protocol: "WebSocket only", note: "Connect via wss:// protocol" });
+});
+
+app.get("/dashboard", (req, res) => {
+  res.json({ status: "ok", endpoint: "/dashboard", protocol: "WebSocket only", note: "Connect via wss:// protocol" });
 });
 
 const server = http.createServer(app);
