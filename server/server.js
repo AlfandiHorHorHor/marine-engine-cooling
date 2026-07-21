@@ -134,6 +134,11 @@ deviceWSS.on("connection", (ws) => {
   ws.on("error", (err) => {
     console.warn("[device] socket error:", err.message);
   });
+
+  const pingInterval = setInterval(() => {
+    if (ws.readyState === ws.OPEN) ws.ping();
+  }, 25000);
+  ws.on("close", () => clearInterval(pingInterval));
 });
 
 // --------------------------------------------------------------------
